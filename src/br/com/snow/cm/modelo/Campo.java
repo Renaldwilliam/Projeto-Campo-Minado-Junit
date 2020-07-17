@@ -3,6 +3,8 @@ package br.com.snow.cm.modelo;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.snow.cm.excecao.ExplosaoException;
+
 public class Campo {
 
 	private final int linha;
@@ -26,7 +28,7 @@ public class Campo {
 
 		int deltaLinha = Math.abs(linha - vizinho.linha);
 		int deltaColuna = Math.abs(coluna - vizinho.coluna);
-		int deltaGeral = deltaColuna + deltaLinha ;
+		int deltaGeral = deltaColuna + deltaLinha;
 
 		if (deltaGeral == 1 && !diagonal) {
 			vizinhos.add(vizinho);
@@ -38,5 +40,52 @@ public class Campo {
 			return false;
 		}
 
+	}
+
+	void alternarMarcacao() {
+		if (!aberto) {
+			marcado = !marcado;
+		}
+	}
+
+	boolean abrir() {
+
+		if (!aberto && !marcado) {
+			aberto = true;
+
+			if (minado) {
+				throw new ExplosaoException();
+			}
+
+			if (vizinhacaSegura()) {
+				vizinhos.forEach(v -> v.abrir());
+			}
+
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	boolean vizinhacaSegura() {
+		return vizinhos.stream().noneMatch(v -> v.minado);
+	}
+
+	void minar() {
+		if (!minado) {
+			minado = true;
+		}
+	}
+
+	public boolean isMarcado() {
+		return marcado;
+	}
+	
+	public boolean isAberto() {
+		return aberto;
+	}
+	
+	public boolean isfechado() {
+		return !isAberto();
 	}
 }
