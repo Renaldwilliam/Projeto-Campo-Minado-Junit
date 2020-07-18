@@ -26,26 +26,26 @@ public class Tabuleiro {
 		associarVizinhos();
 		sortearMinas();
 	}
-	
+
 	public void abrir(int linha, int coluna) {
 		try {
-			campos.parallelStream().filter(c -> c.getLinha() == linha && c.getColuna() == coluna)
-			.findFirst().ifPresent(c -> c.abrir());;
-		}catch(ExplosaoException e){
+			campos.parallelStream().filter(c -> c.getLinha() == linha && c.getColuna() == coluna).findFirst()
+					.ifPresent(c -> c.abrir());
+			;
+		} catch (ExplosaoException e) {
 			campos.forEach(c -> c.setAberto(true));
 			throw e;
 		}
 	}
-	
+
 	/*
-	public void abrir(int linha, int coluna) {
-		campos.parallelStream().filter(c -> c.getLinha() == linha && c.getColuna() == coluna)
-		.findFirst().ifPresent(c -> c.abrir());;
-	}
-	*/
+	 * public void abrir(int linha, int coluna) { campos.parallelStream().filter(c
+	 * -> c.getLinha() == linha && c.getColuna() == coluna) .findFirst().ifPresent(c
+	 * -> c.abrir());; }
+	 */
 	public void alternarMarcacao(int linha, int coluna) {
-		campos.parallelStream().filter(c -> c.getLinha() == linha && c.getColuna() == coluna)
-		.findFirst().ifPresent(c -> c.alternarMarcacao());
+		campos.parallelStream().filter(c -> c.getLinha() == linha && c.getColuna() == coluna).findFirst()
+				.ifPresent(c -> c.alternarMarcacao());
 	}
 
 	private void gerarCampos() {
@@ -69,8 +69,8 @@ public class Tabuleiro {
 		Predicate<Campo> minado = c -> c.isMinado();
 
 		do {
-			minasArmadas = campos.stream().filter(minado).count();
 			int aleatorio = (int) (Math.random() * campos.size());
+			minasArmadas = campos.stream().filter(minado).count();
 			campos.get(aleatorio).minar();
 
 		} while (minasArmadas < minas);
@@ -84,13 +84,24 @@ public class Tabuleiro {
 		campos.stream().forEach(c -> c.reiniciar());
 		sortearMinas();
 	}
-	
+
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
+		
+		sb.append("  ");
+		for (int c = 0; c < colunas; c++) {
+			sb.append(" ");
+			sb.append(c);
+			sb.append(" ");
+		}
+		sb.append("\n");
+		
 		int i = 0;
 		for (int l = 0; l < linhas; l++) {
-			
+			sb.append(l);
+			sb.append(" ");
 			for (int c = 0; c < colunas; c++) {
+				
 				sb.append(" ");
 				sb.append(campos.get(i));
 				sb.append(" ");
@@ -98,7 +109,7 @@ public class Tabuleiro {
 			}
 			sb.append("\n");
 		}
-		
+
 		return sb.toString();
 	}
 }
